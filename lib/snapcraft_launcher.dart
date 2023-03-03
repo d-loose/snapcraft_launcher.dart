@@ -24,6 +24,8 @@ class PrivilegedDesktopLauncher {
   /// Connects to 'io.snapcraft.Launcher'
   Future<void> connect() async {
     try {
+      // Call `openDesktopEntry` with dummy desktop ID to check if we can access
+      // 'io.snapcraft.Launcher'
       await openDesktopEntry('invalidname');
     } on Exception catch (e) {
       if (e is! DBusFailedException) {
