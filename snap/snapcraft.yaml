@@ -1,0 +1,46 @@
+name: snapcraft-launcher
+version: git
+summary: Snapcraft Launcher
+description: Runs a desktop application from another snap.
+confinement: strict
+base: core22
+grade: devel
+license: GPL-3.0+
+architectures:
+  - build-on: amd64
+
+parts:
+  flutter-git:
+    source: https://github.com/flutter/flutter.git
+    source-branch: stable
+    source-depth: 1
+    plugin: nil
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/usr/bin
+      mkdir -p $CRAFT_PART_INSTALL/usr/libexec
+      cp -r $CRAFT_PART_SRC $CRAFT_PART_INSTALL/usr/libexec/flutter
+      ln -s $CRAFT_PART_INSTALL/usr/libexec/flutter/bin/dart $CRAFT_PART_INSTALL/usr/bin/dart
+    build-packages:
+      - clang
+      - cmake
+      - curl
+      - ninja-build
+      - unzip
+      - xz-utils
+      - zip
+    override-prime: ''
+  snapcraft-launcher:
+    after: [flutter-git]
+    plugin: nil
+    source: .
+    override-build: |
+      set -eux
+      dart pub get
+      mkdir -p $CRAFT_PART_INSTALL/bin/
+      dart compile exe example/snapcraft_launcher.dart -o $CRAFT_PART_INSTALL/bin/snapcraft-launcher
+
+apps:
+  snapcraft-launcher:
+    command: bin/snapcraft-launcher
+    extensions: [gnome]
+    plugs: [desktop-launch]
