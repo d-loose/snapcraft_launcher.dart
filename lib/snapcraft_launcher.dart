@@ -1,6 +1,7 @@
 import 'package:dbus/dbus.dart';
 import 'package:meta/meta.dart';
 
+/// Client that connects to the snapcraft launcher
 class PrivilegedDesktopLauncher {
   PrivilegedDesktopLauncher({
     DBusClient? bus,
@@ -14,11 +15,13 @@ class PrivilegedDesktopLauncher {
         );
   }
 
+  /// If false, the client cannot connect to 'io.snapcraft.Launcher'
   bool get isAvailable => _isAvailable;
   var _isAvailable = false;
   final DBusClient _bus;
   late final DBusRemoteObject _object;
 
+  /// Connects to 'io.snapcraft.Launcher'
   Future<void> connect() async {
     try {
       await openDesktopEntry('invalidname');
@@ -31,11 +34,13 @@ class PrivilegedDesktopLauncher {
     _isAvailable = true;
   }
 
+  /// Closes the connection
   Future<void> close() => _bus.close();
 
-  Future<void> openDesktopEntry(String desktopEntry) => _object.callMethod(
+  /// Launches the desktop entry given by [desktopFileId]
+  Future<void> openDesktopEntry(String desktopFileId) => _object.callMethod(
         'io.snapcraft.PrivilegedDesktopLauncher',
         'OpenDesktopEntry',
-        [DBusString(desktopEntry)],
+        [DBusString(desktopFileId)],
       );
 }
