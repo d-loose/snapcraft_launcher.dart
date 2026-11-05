@@ -1,6 +1,6 @@
 name: snapcraft_launcher
 description: A native Dart client library to access the snapd desktop-launch interface.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/d-loose/snapcraft_launcher.dart
 
 environment:
